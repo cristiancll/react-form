@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Button, TextField} from "@material-ui/core";
+import FormValidation from "../../contexts/FormValidation";
+import useErrors from "../../hooks/useErrors";
 
-function AddressData({nextStep, validations}) {
+function AddressData({nextStep}) {
     
     const [zipCode, setZipcode] = useState("");
     const [state, setState] = useState("");
@@ -9,17 +11,9 @@ function AddressData({nextStep, validations}) {
     const [street, setStreet] = useState("");
     const [number, setNumber] = useState("");
 
-    const [errors, setErrors] = useState({taxpayerId:{error: false, helperText: ""}});
-    function validateField(e){
-        const {name, value} = e.target;
-        const nErrors = {...errors};
-        nErrors[name] = validations[name](value);
-        setErrors(nErrors);
-    }
-    function hasErrors(){
-        for(let field in errors) if(errors[field].error) return true;
-        return false;
-    }
+    const validations = useContext(FormValidation);
+    const [errors, validateField, hasErrors] = useErrors(validations);
+    
     return (
         <form onSubmit={e => {
             e.preventDefault();

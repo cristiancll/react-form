@@ -1,22 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Button, TextField} from "@material-ui/core";
-
-function UserData({nextStep, validations}) {
+import FormValidation from "../../contexts/FormValidation";
+import useErrors from "../../hooks/useErrors";
+function UserData({nextStep}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const validations = useContext(FormValidation);
+    const [errors, validateField, hasErrors] = useErrors(validations);
     
-    
-    const [errors, setErrors] = useState({password:{error: false, helperText: ""}});
-    function validateField(e){
-        const {name, value} = e.target;
-        const nErrors = {...errors};
-        nErrors[name] = validations[name](value);
-        setErrors(nErrors);
-    }
-    function hasErrors(){
-        for(let field in errors) if(errors[field].error) return true;
-        return false;
-    }
     return (
         <form onSubmit={e => {
             e.preventDefault();

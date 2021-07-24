@@ -16,9 +16,9 @@ function RegistrationForm({submitForm, validations}){
     });
     
     const forms = [
-        <UserData nextStep={nextStep} validations={validations}/>,
-        <PersonalData nextStep={nextStep} validations={validations}/>,
-        <AddressData nextStep={nextStep} validations={validations}/>,
+        <UserData nextStep={nextStep}/>,
+        <PersonalData nextStep={nextStep}/>,
+        <AddressData nextStep={nextStep}/>,
         <Typography variant="h5" align="center">Cadastro realizado com sucesso!</Typography>
     ];
     
