@@ -1,52 +1,51 @@
-import React, {useState} from 'react';
-import {Button, FormControlLabel, Switch, TextField} from "@material-ui/core";
+import React, {useState, useEffect} from 'react';
+import PersonalData from "./PersonalData";
+import UserData from "./UserData";
+import AddressData from "./AddressData";
+import {Step, StepLabel, Stepper, Typography} from "@material-ui/core";
 
-function RegistrationForm({submitForm, validateTaxpayerId}){
-    const [name, setName] = useState("");
-    const [surname, setSurname] = useState("");
-    const [taxpayerId, setTaxpayerId] = useState("");
-    const [promo, setPromo] = useState(true);
-    const [newsletter, setNewsletter] = useState(true);
+function RegistrationForm({submitForm, validations}){
+    const [currentStep, setCurrentStep] = useState(0);
+    const [formData, setFormData] = useState({});
+
+    useEffect(() => {
+        console.log(formData);
+        if(currentStep === forms.length - 1){
+            submitForm(formData);     
+        }
+    });
     
-    const [errors, setErrors] = useState({taxpayerId:{error: false, helperText: ""}});
+    const forms = [
+        <UserData nextStep={nextStep} validations={validations}/>,
+        <PersonalData nextStep={nextStep} validations={validations}/>,
+        <AddressData nextStep={nextStep} validations={validations}/>,
+        <Typography variant="h5" align="center">Cadastro realizado com sucesso!</Typography>
+    ];
     
+    function nextStep(data){
+        setFormData({...formData, ...data});
+        setCurrentStep(currentStep + 1);
+    }
+    function previousStep(){
+        if(currentStep - 1 >= 0){
+            setCurrentStep(currentStep - 1);    
+        }
+    }
     
+    function currentForm(currentStep){
+        if(currentStep > forms.length) return <Typography>Erro ao selecionar formulário</Typography>;
+        return forms[currentStep];
+    }
     
-    return <form onSubmit={event => {
-      event.preventDefault();
-      submitForm({name, surname, taxpayerId, promo, newsletter});
-    }}>
-        <TextField id="name" value={name} label="Nome" variant="outlined" margin="normal" fullWidth
-            onChange={event => setName(event.target.value)}/>
-        <TextField id="surname" value={surname} label="Sobrenome" variant="outlined" margin="normal" fullWidth
-            onChange={event => setSurname(event.target.value)}/>
-        <TextField id="taxpayerId" value={taxpayerId} label="CPF" variant="outlined" margin="normal" fullWidth
-            onChange={event => setTaxpayerId(event.target.value)}
-            onBlur={event => {
-                setErrors({taxpayerId: validateTaxpayerId(taxpayerId)})
-            }}
-            error={errors.taxpayerId.error}
-            helperText={errors.taxpayerId.helperText}/>
-        <FormControlLabel label="Promoções"
-            control={
-                <Switch color="primary"
-                    checked={promo}
-                    onChange={event => setPromo(event.target.checked)}/>
-            }/>
-        <FormControlLabel label="Novidades"
-            control={
-                <Switch color="primary"
-                    checked={newsletter}
-                    onChange={event => setNewsletter(event.target.checked)}/>
-            }/>
-        <Button
-            type="submit"
-            variant="contained" 
-            color="primary">
-            Cadastrar
-        </Button>
-    </form>;
+    return (<>
+        <Stepper activeStep={currentStep}>
+            <Step><StepLabel>Login</StepLabel></Step>
+            <Step><StepLabel>Pessoal</StepLabel></Step>
+            <Step><StepLabel>Endereço</StepLabel></Step>
+            <Step><StepLabel>Finalização</StepLabel></Step>
+        </Stepper>
+        { currentForm(currentStep) }
+    </>);
 }
-
 
 export default RegistrationForm;
